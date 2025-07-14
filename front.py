@@ -31,14 +31,14 @@ st.header("📋 Enter Customer Information")
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    credit_score = st.number_input("Credit Score", 300, 900, 600)
-    age = st.number_input("Age", 18, 100, 35)
-    tenure = st.number_input("Tenure (Years)", 0, 10, 3)
+    credit_score = st.number_input("Credit Score", 300, 1000, 600)
+    age = st.number_input("Age", 18, 150, 35)
+    tenure = st.number_input("Tenure (Years)", 0, 90, 3)
 
 with col2:
-    balance = st.number_input("Balance Amount", 0.0, 250000.0, 50000.0)
-    num_products = st.number_input("Number of Products", 1, 4, 2)
-    estimated_salary = st.number_input("Estimated Salary", 10000.0, 200000.0, 60000.0)
+    balance = st.number_input("Balance Amount", 0.0, 2500000.0, 50000.0)
+    num_products = st.number_input("Number of Products", 1, 50, 2)
+    estimated_salary = st.number_input("Estimated Salary", 0.0, 2000000.0, 60000.0)
 
 with col3:
     geography = st.selectbox("Geography", ["France", "Germany", "Spain"])
