@@ -3,10 +3,12 @@ import numpy as np
 import pandas as pd
 import pickle
 
-# Load model (replace with your actual model file)
-# with open("churn_model.pkl", "rb") as file:
-#     model = pickle.load(file)
+with open('best_model.pkl', 'rb') as file:
+    model = pickle.load(file)
 
+# Load the MinMaxScaler
+with open('scaler.pkl', 'rb') as file:
+    scaler = pickle.load(file)
 # For demo purposes, let's simulate prediction
 def fake_predict(data):
     return int(sum(data) % 2 == 0)  # Dummy prediction logic
