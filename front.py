@@ -3,77 +3,42 @@ import streamlit as st
 import pickle
 import pandas as pd
 import time
+from PIL import Image
 
-# Set Streamlit layout
-st.set_page_config(layout="wide", page_title="Customer Churn Prediction")
+# Set page config
+st.set_page_config(page_title="Customer Churn Prediction", layout="wide")
 
-# Custom CSS styles
-st.markdown(
-    """
-    <style>
-        .stButton>button {
-            background: linear-gradient(90deg, #6a11cb, #2575fc);
-            color: white;
-            font-size: 18px;
-            padding: 12px 24px;
-            border-radius: 8px;
-            transition: all 0.3s ease-in-out;
-            cursor: pointer;
-            border: none;
-        }
-        .stButton>button:hover {
-            background: linear-gradient(90deg, #2575fc, #6a11cb);
-            transform: scale(1.05);
-        }
-        .prediction-result {
-            font-size: 22px;
-            padding: 10px;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: bold;
-        }
-        .churned {
-            background-color: #ff4b4b;
-            color: white;
-        }
-        .retained {
-            background-color: #4CAF50;
-            color: white;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+# Optional banner image (local or hosted)
+st.image("https://cdn.pixabay.com/photo/2020/04/23/13/57/business-5087581_1280.jpg", use_column_width=True)
 
-# Load model
-with open('best_model.pkl', 'rb') as file:
+# App Header
+st.title("✨ Customer Churn Prediction")
+st.subheader("Will the customer stay or leave? Let’s find out!")
+
+# Load model and scaler
+with open("best_model.pkl", "rb") as file:
     model = pickle.load(file)
 
-# Load scaler
-with open('scaler.pkl', 'rb') as file:
+with open("scaler.pkl", "rb") as file:
     scaler = pickle.load(file)
 
 scale_vars = ["CreditScore", "EstimatedSalary", "Tenure", "Balance", "Age", "NumOfProducts"]
 
-# UI Header
-st.title("✨ Customer Churn Prediction")
-st.subheader("Will the customer stay or leave? Let’s find out!")
-
+# User Inputs
 st.markdown("---")
 st.header("📋 Enter Customer Information")
 
-# Layout columns for better input display
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    credit_score = st.number_input("Credit Score", min_value=300, max_value=900, value=600)
-    age = st.number_input("Age", min_value=18, max_value=100, value=35)
-    tenure = st.number_input("Tenure (Years)", min_value=0, max_value=10, value=3)
+    credit_score = st.number_input("Credit Score", 300, 900, 600)
+    age = st.number_input("Age", 18, 100, 35)
+    tenure = st.number_input("Tenure (Years)", 0, 10, 3)
 
 with col2:
-    balance = st.number_input("Balance Amount", min_value=0.0, max_value=250000.0, value=50000.0)
-    num_products = st.number_input("Number of Products", min_value=1, max_value=4, value=2)
-    estimated_salary = st.number_input("Estimated Salary", min_value=10000.0, max_value=200000.0, value=60000.0)
+    balance = st.number_input("Balance Amount", 0.0, 250000.0, 50000.0)
+    num_products = st.number_input("Number of Products", 1, 4, 2)
+    estimated_salary = st.number_input("Estimated Salary", 10000.0, 200000.0, 60000.0)
 
 with col3:
     geography = st.selectbox("Geography", ["France", "Germany", "Spain"])
@@ -81,7 +46,7 @@ with col3:
     has_credit_card = st.selectbox("Has Credit Card?", ["Yes", "No"])
     is_active_member = st.selectbox("Is Active Member?", ["Yes", "No"])
 
-# One-hot encode categorical features
+# Feature engineering
 features = {
     "CreditScore": credit_score,
     "Age": age,
@@ -100,18 +65,18 @@ features = {
     "IsActiveMember_0": 1 if is_active_member == "No" else 0
 }
 
-# Convert to DataFrame
 input_df = pd.DataFrame([features])
 input_scaled = input_df.copy()
 input_scaled[scale_vars] = scaler.transform(input_df[scale_vars])
 
-# Ensure feature order matches model
+# Match expected feature order
 expected_feature_order = model.get_booster().feature_names
 input_scaled = input_scaled[expected_feature_order]
 
-# Predict Button
+# Prediction Section
 st.markdown("---")
 st.header("🔍 Prediction")
+
 if st.button("🚀 Predict Now"):
     with st.spinner("⏳ Analyzing data..."):
         time.sleep(2)
@@ -120,15 +85,49 @@ if st.button("🚀 Predict Now"):
     probabilities = model.predict_proba(input_scaled)[0]
     prediction_label = "Churned" if prediction == 1 else "Retained"
 
+    # Styled result
     st.markdown(
-        f"<div class='prediction-result {'churned' if prediction == 1 else 'retained'}'>"
-        f"{'⚠️' if prediction == 1 else '✅'} <b>Predicted Status:</b> {prediction_label}</div>",
+        f"<div style='padding: 15px; border-radius: 10px; text-align: center; font-size: 20px; font-weight: bold; "
+        f"background-color: {'#ff4b4b' if prediction == 1 else '#4CAF50'}; color: white;'>"
+        f"{'⚠️' if prediction == 1 else '✅'} Predicted Status: {prediction_label}</div>",
         unsafe_allow_html=True
     )
     st.write(f"📌 **Probability of Churn:** {probabilities[1]:.2%}")
     st.write(f"📌 **Probability of Retention:** {probabilities[0]:.2%}")
 
-# Optional Tips
+    # 💡 Custom Insights
+    st.markdown("### 📌 Custom Insights")
+    insights = []
+
+    if credit_score < 500:
+        insights.append("• Low credit score may increase churn risk.")
+    if age < 25:
+        insights.append("• Younger customers are more likely to churn.")
+    if tenure < 2:
+        insights.append("• Short tenure indicates low brand loyalty.")
+    if balance > 100000 and estimated_salary < 40000:
+        insights.append("• High balance with low salary may lead to financial dissatisfaction.")
+    if num_products == 1:
+        insights.append("• Single-product customers are more likely to leave.")
+    if is_active_member == "No":
+        insights.append("• Inactive members have a higher churn rate.")
+
+    if num_products >= 3:
+        insights.append("✅ Having multiple products suggests strong engagement.")
+    if is_active_member == "Yes":
+        insights.append("✅ Active usage is a sign of customer satisfaction.")
+    if has_credit_card == "Yes":
+        insights.append("✅ Customers with credit cards show higher retention.")
+    if tenure > 5:
+        insights.append("✅ Long tenure indicates high loyalty.")
+
+    if insights:
+        for insight in insights:
+            st.write(insight)
+    else:
+        st.write("🔍 No strong churn indicators found. Customer profile appears stable.")
+
+# FAQ Section
 with st.expander("💡 What influences churn?"):
     st.write("""
     - **Credit Score**: Lower scores increase churn risk.
