@@ -9,7 +9,7 @@ from PIL import Image
 st.set_page_config(page_title="Customer Churn Prediction", layout="wide")
 
 # Optional banner image (local or hosted)
-st.image("https://image.shutterstock.com/z/illustration/customer-churn.jpg", use_container_width=True)
+st.image("https://thumbs.dreamstime.com/b/customer-churn-rate-concept-client-attrition-d-illustration-customers-analysis-162267469.jpg", use_container_width=True)
 
 # App Header
 st.title("✨ Customer Churn Prediction")
