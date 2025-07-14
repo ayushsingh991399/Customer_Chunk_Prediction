@@ -89,7 +89,7 @@ if st.button("🚀 Predict Now"):
     st.markdown(
         f"<div style='padding: 15px; border-radius: 10px; text-align: center; font-size: 20px; font-weight: bold; "
         f"background-color: {'#ff4b4b' if prediction == 1 else '#4CAF50'}; color: white;'>"
-        f"{'⚠️' if prediction == 1 else '✅'} Predicted Status: {prediction_label}</div>",
+        f"{'⚠️' if prediction == 1 else '✅' st.balloons()} Predicted Status: {prediction_label}</div>",
         unsafe_allow_html=True
     )
     st.write(f"📌 **Probability of Churn:** {probabilities[1]:.2%}")
