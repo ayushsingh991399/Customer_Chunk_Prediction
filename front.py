@@ -8,8 +8,9 @@ from PIL import Image
 # Set page config
 st.set_page_config(page_title="Customer Churn Prediction", layout="wide")
 
-# Optional banner image (local or hosted)
-st.image("https://thumbs.dreamstime.com/b/customer-churn-rate-concept-client-attrition-d-illustration-customers-analysis-162267469.jpg", use_container_width=True)
+# Optional banner image
+st.image("https://thumbs.dreamstime.com/b/customer-churn-rate-concept-client-attrition-d-illustration-customers-analysis-162267469.jpg",
+         use_container_width=True)
 
 # App Header
 st.title("✨ Customer Churn Prediction")
@@ -89,11 +90,16 @@ if st.button("🚀 Predict Now"):
     st.markdown(
         f"<div style='padding: 15px; border-radius: 10px; text-align: center; font-size: 20px; font-weight: bold; "
         f"background-color: {'#ff4b4b' if prediction == 1 else '#4CAF50'}; color: white;'>"
-        f"{'⚠️' if prediction == 1 else '✅' st.balloons()} Predicted Status: {prediction_label}</div>",
+        f"{'⚠️' if prediction == 1 else '✅' } Predicted Status: {prediction_label}</div>",
         unsafe_allow_html=True
     )
+
     st.write(f"📌 **Probability of Churn:** {probabilities[1]:.2%}")
     st.write(f"📌 **Probability of Retention:** {probabilities[0]:.2%}")
+
+    # 🎈 Balloons for retained customers
+    if prediction_label == "Retained":
+        st.balloons()
 
     # 💡 Custom Insights
     st.markdown("### 📌 Custom Insights")
